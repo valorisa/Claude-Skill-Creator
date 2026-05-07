@@ -74,6 +74,38 @@ Once approved, the skill confirms:
 
 The real test happens in a fresh session where the skill is loaded from disk. This is intentional — it is the only honest way to validate that the skill works as intended.
 
+## How Council validation works
+
+Every skill created by this tool passes through a quality assurance step before reaching you. Here is what happens concretely:
+
+1. The menu poses the 7 questions
+2. Claude generates a first draft of the skill
+3. The LLM Council intervenes — 5 independent advisors critique the generated skill (quality, safety, edge cases, clarity)
+4. The Council's corrections are applied to the draft
+5. You iterate on the result and test in a new session
+
+Each skill created goes through this peer review before being delivered to you. It is not Claude validating its own work — it is 5 distinct perspectives looking for flaws.
+
+### How the Council works internally
+
+The Council uses 5 thinking roles, each with a different angle of critique:
+
+| Role | Focus |
+| ---- | ----- |
+| The Contrarian | What will fail? What is missing? What is wrong? |
+| The First Principles Thinker | Is this solving the right problem? Strip assumptions. |
+| The Expansionist | What upside is being missed? What could be bigger? |
+| The Outsider | What would confuse someone with zero context? |
+| The Executor | Can this actually be done? What breaks in practice? |
+
+These are not 5 different AI models. They are 5 independent prompts to the same model, each constrained to a specific thinking style. The diversity comes from the roles, not from the architecture. This is adapted from Andrej Karpathy's LLM Council methodology.
+
+### Important nuances
+
+- **Optional:** If the `llm-council` skill is not installed, the Skill Creator falls back to a structural checklist (less thorough but functional)
+- **Token cost:** Running the full Council spawns 5 sub-agents, which consumes additional tokens. This is a quality tradeoff — you get better skills at higher cost per creation
+- **Not a permanent supervisor:** The Council runs once per skill creation, at Phase 3. It does not monitor skills after they are deployed
+
 ## Installation
 
 ### Option 1 - Copy to your skills directory (recommended)
