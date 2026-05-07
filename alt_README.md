@@ -23,7 +23,7 @@ A meta-skill for Claude Code that helps you create, test, iterate, and improve c
 - [Contributing](#contributing)
 - [License](#license)
 - [Credits](#credits)
-- [Documentation en fran\xe7ais](#documentation-en-francais)
+- [Documentation en français](#documentation-en-francais)
 
 ---
 
@@ -458,11 +458,11 @@ MIT License. See the LICENSE file for details.
 
 ### En une phrase
 
-C'est un fichier markdown (`SKILL.md`) qui dit \xe0 Claude Code comment vous guider dans la cr\xe9ation d'autres fichiers markdown (skills).
+C'est un fichier markdown (`SKILL.md`) qui dit à Claude Code comment vous guider dans la création d'autres fichiers markdown (skills).
 
 ### Le principe
 
-Quand vous tapez `/skill-creator` dans Claude Code, Claude lit le fichier `~/.claude/skills/skill-creator/SKILL.md` et suit ses instructions \xe0 la lettre. Ce fichier d\xe9crit un processus en 5 phases.
+Quand vous tapez `/skill-creator` dans Claude Code, Claude lit le fichier `~/.claude/skills/skill-creator/SKILL.md` et suit ses instructions à la lettre. Ce fichier décrit un processus en 5 phases.
 
 ### Phase 1 — Menu (7 questions)
 
@@ -471,60 +471,60 @@ Claude vous pose 7 questions pour comprendre ce que vous voulez :
 | # | Question | Pourquoi |
 | - | -------- | -------- |
 | 1 | Quel type de skill ? | Choisir le bon pattern |
-| 2 | Quel d\xe9clencheur ? | Slash command, auto-d\xe9tection, ou les deux |
+| 2 | Quel déclencheur ? | Slash command, auto-détection, ou les deux |
 | 3 | Quels outils ? | Ce que la skill pourra faire (fichiers, shell, web) |
-| 4 | Quel format de sortie ? | Code, texte, donn\xe9es structur\xe9es, mixte |
+| 4 | Quel format de sortie ? | Code, texte, données structurées, mixte |
 | 5 | Que doit-elle REFUSER de faire ? | Garde-fous et limites |
 | 6 | Niveau d'autonomie ? | Demander avant d'agir, ou agir directement |
-| 7 | Description + exemple concret | L'intent + un cas r\xe9el d'input/output |
+| 7 | Description + exemple concret | L'intent + un cas réel d'input/output |
 
-Si vous donnez une spec pr\xe9cise d'entr\xe9e, le menu est saut\xe9.
+Si vous donnez une spec précise d'entrée, le menu est sauté.
 
-### Phase 2 — G\xe9n\xe9ration
+### Phase 2 — Génération
 
-Claude \xe9crit un fichier SKILL.md complet avec :
+Claude écrit un fichier SKILL.md complet avec :
 
-- Un avertissement de s\xe9curit\xe9 (permissions, pas d'op\xe9rations destructives sans confirmation)
+- Un avertissement de sécurité (permissions, pas d'opérations destructives sans confirmation)
 - Section Trigger
-- Section Process (\xe9tapes num\xe9rot\xe9es, imp\xe9ratives)
+- Section Process (étapes numérotées, impératives)
 - Section Constraints (dont vos boundaries de la Q5)
 - Section Output
 
-Le fichier est plafonn\xe9 \xe0 150 lignes. Le dossier est cr\xe9\xe9 automatiquement.
+Le fichier est plafonné à 150 lignes. Le dossier est créé automatiquement.
 
 ### Phase 3 — Validation par le Council
 
-**Si `llm-council` est install\xe9 :** 5 conseillers ind\xe9pendants critiquent la skill g\xe9n\xe9r\xe9e :
+**Si `llm-council` est installé :** 5 conseillers indépendants critiquent la skill générée :
 
-| R\xf4le | Question pos\xe9e |
+| Rôle | Question posée |
 | ---- | -------------- |
 | Contrarian | Qu'est-ce qui va casser ? |
-| First Principles | Est-ce le bon probl\xe8me ? |
+| First Principles | Est-ce le bon problème ? |
 | Expansionist | Qu'est-ce qu'on rate ? |
 | Outsider | C'est confus pour un nouveau ? |
-| Executor | \xc7a marche en pratique ? |
+| Executor | Ça marche en pratique ? |
 
-Leurs corrections sont appliqu\xe9es avant de vous montrer le r\xe9sultat.
+Leurs corrections sont appliquées avant de vous montrer le résultat.
 
-**Si `llm-council` n'est pas install\xe9 :** une checklist structurelle v\xe9rifie 7 crit\xe8res (trigger clair, \xe9tapes imp\xe9ratives, contraintes pr\xe9sentes, output explicite, < 150 lignes, pas de contradictions, pas de conflits).
+**Si `llm-council` n'est pas installé :** une checklist structurelle vérifie 7 critères (trigger clair, étapes impératives, contraintes présentes, output explicite, < 150 lignes, pas de contradictions, pas de conflits).
 
-### Phase 4 — It\xe9ration
+### Phase 4 — Itération
 
-Claude vous montre le r\xe9sultat et demande : "Qu'est-ce que tu changerais ?" Vous donnez du feedback, Claude corrige, vous redemande. Boucle infinie jusqu'\xe0 votre satisfaction.
+Claude vous montre le résultat et demande : "Qu'est-ce que tu changerais ?" Vous donnez du feedback, Claude corrige, vous redemande. Boucle infinie jusqu'à votre satisfaction.
 
 ### Phase 5 — Finalisation + vrai test
 
-Claude confirme l'emplacement du fichier, sugg\xe8re 2-3 edge cases, et vous dit :
+Claude confirme l'emplacement du fichier, suggère 2-3 edge cases, et vous dit :
 
 > "Ouvre une nouvelle session et essaie : [prompt concret]"
 
-Le vrai test se fait dans une session fra\xeeche o\xf9 la skill est charg\xe9e depuis le disque.
+Le vrai test se fait dans une session fraîche où la skill est chargée depuis le disque.
 
 ### Ce que l'utilisateur installe
 
-Uniquement le dossier `skill-creator/` copi\xe9 dans `~/.claude/skills/`. Le reste (README, .github, etc.) c'est l'habillage GitHub pour la communaut\xe9.
+Uniquement le dossier `skill-creator/` copié dans `~/.claude/skills/`. Le reste (README, .github, etc.) c'est l'habillage GitHub pour la communauté.
 
-### La cha\xeene de d\xe9pendances
+### La chaîne de dépendances
 
 ```text
 L'utilisateur tape /skill-creator
