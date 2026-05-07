@@ -4,6 +4,29 @@
 
 A meta-skill for Claude Code that helps you create, test, iterate, and improve custom skills through a structured menu-driven conversational workflow. Skills are plain markdown — other LLMs can interpret them, but only Claude Code has been tested.
 
+---
+
+## Table of Contents
+
+- [What is a skill](#what-is-a-skill)
+- [Quick Start](#quick-start)
+- [Installation](#installation)
+- [Usage examples](#usage-examples)
+- [Why this exists](#why-this-exists)
+- [How it works](#how-it-works)
+- [Design principles](#design-principles)
+- [How Council validation works](#how-council-validation-works)
+- [Optional extensions](#optional-extensions)
+- [Requirements](#requirements)
+- [Uninstall](#uninstall)
+- [Project structure](#project-structure)
+- [Contributing](#contributing)
+- [License](#license)
+- [Credits](#credits)
+- [Documentation en français](#documentation-en-francais)
+
+---
+
 ## What is a skill
 
 A skill is a markdown file placed in a known directory that instructs an LLM how to behave when a specific trigger is detected. The LLM reads the file and follows the instructions. No runtime, no compilation, no API — just structured text that shapes behavior.
@@ -20,91 +43,18 @@ Different LLMs load skills from different locations:
 
 The format this tool generates is designed for Claude Code. Other LLMs may interpret the same markdown instructions, but cross-platform compatibility has not been formally tested. Contributions welcome for verified adapters.
 
-## Why this exists
+---
 
-Creating a good skill requires a specific discipline: clearly defining triggers, expected behavior, constraints, and output format. Without structure, you end up with vague prompts that produce inconsistent results.
+## Quick Start
 
-The difference between asking Claude "help me write a skill" bare and using this tool is the structured interview. The menu forces you to think through purpose, triggers, complexity, tools, and output format before any generation happens. That specificity is what produces skills that work reliably instead of skills that work sometimes.
+```bash
+git clone https://github.com/valorisa/Claude-Skill-Creator.git
+cp -r Claude-Skill-Creator/skill-creator ~/.claude/skills/skill-creator
+```
 
-The design philosophy comes from a deliberation process (LLM Council with 5 independent advisors and peer review) that converged on one principle: the conversation is the product, not the folder structure.
+Then open a new Claude Code session and type `/skill-creator`.
 
-## How it works
-
-The Skill Creator operates in five phases.
-
-### Phase 1 - Menu interview
-
-The skill presents a structured menu with 7 questions:
-
-1. **Purpose** — What type of skill? (code generation, analysis, workflow, content, data processing, custom)
-2. **Trigger style** — Slash command, auto-detect, or both?
-3. **Tools needed** — None, file system, shell, web, or multiple?
-4. **Output format** — Code, text, structured data, mixed, or files + report?
-5. **Boundaries** — What should this skill explicitly REFUSE to do?
-6. **Autonomy level** — Ask before acting, act then confirm, or full autonomy?
-7. **Description + example** — What should the skill do, and what does a concrete input/output look like?
-
-If you provide a precise specification that answers these questions upfront, the menu is skipped and generation begins immediately. If you mention a non-Claude target LLM, the output is adapted to that platform's conventions.
-
-### Phase 2 - Generate first draft
-
-Based on your answers, the skill generates a complete structured markdown file with: trigger definition, numbered process steps, constraints (including your stated boundaries), and output format. Generated skills are capped at 150 lines — if longer, the skill is split. The file is placed in `~/.claude/skills/[skill-name]/SKILL.md`. The directory is created automatically if it does not exist.
-
-### Phase 3 - Council validation
-
-Before showing you the result, the generated skill is validated through one of two paths:
-
-**Path A — LLM Council (recommended):** If the `llm-council` skill is installed, the draft is submitted to 5 independent advisors who evaluate quality, safety, edge cases, and clarity. The verdict is presented to you with what works, what was flagged, and specific fixes. Fixes are applied before you see the final draft. This is real peer review, not self-evaluation.
-
-**Path B — Structural checklist (fallback):** If the Council is unavailable, the skill self-checks against 7 criteria: trigger clarity, imperative steps, constraints present (including boundaries you specified), output explicit, length under 150 lines, no contradictions, no trigger conflicts. Failures are fixed before showing you the result.
-
-**Note:** Council validation requires the `llm-council` skill to be installed separately. Running the full Council spawns 5 sub-agents and consumes additional tokens — this is a quality tradeoff, not a requirement. Without it, the fallback checklist is used automatically and still catches structural issues.
-
-### Phase 4 - Iterate with user
-
-The generated skill is shown to you with the question: "What would you change?" Based on your feedback, the skill is edited directly and shown again. This loop repeats until you are satisfied.
-
-### Phase 5 - Finalize and try it
-
-Once approved, the skill confirms:
-
-- The file location and trigger command
-- 2-3 edge cases to watch for
-- A concrete test instruction: "Open a new session and try: `[example prompt]`"
-
-The real test happens in a fresh session where the skill is loaded from disk. This is intentional — it is the only honest way to validate that the skill works as intended.
-
-## How Council validation works
-
-Every skill created by this tool passes through a quality assurance step before reaching you. Here is what happens concretely:
-
-1. The menu poses the 7 questions
-2. Claude generates a first draft of the skill
-3. The LLM Council intervenes — 5 independent advisors critique the generated skill (quality, safety, edge cases, clarity)
-4. The Council's corrections are applied to the draft
-5. You iterate on the result and test in a new session
-
-Each skill created goes through this peer review before being delivered to you. It is not Claude validating its own work — it is 5 distinct perspectives looking for flaws.
-
-### How the Council works internally
-
-The Council uses 5 thinking roles, each with a different angle of critique:
-
-| Role | Focus |
-| ---- | ----- |
-| The Contrarian | What will fail? What is missing? What is wrong? |
-| The First Principles Thinker | Is this solving the right problem? Strip assumptions. |
-| The Expansionist | What upside is being missed? What could be bigger? |
-| The Outsider | What would confuse someone with zero context? |
-| The Executor | Can this actually be done? What breaks in practice? |
-
-These are not 5 different AI models. They are 5 independent prompts to the same model, each constrained to a specific thinking style. The diversity comes from the roles, not from the architecture. This is adapted from Andrej Karpathy's LLM Council methodology.
-
-### Important nuances
-
-- **Optional:** If the `llm-council` skill is not installed, the Skill Creator falls back to a structural checklist (less thorough but functional)
-- **Token cost:** Running the full Council spawns 5 sub-agents, which consumes additional tokens. This is a quality tradeoff — you get better skills at higher cost per creation
-- **Not a permanent supervisor:** The Council runs once per skill creation, at Phase 3. It does not monitor skills after they are deployed
+---
 
 ## Installation
 
@@ -157,6 +107,8 @@ New-Item -ItemType SymbolicLink -Path $env:USERPROFILE\.claude\skills\skill-crea
 ### Verify installation
 
 Start a new Claude Code session and type `/skill-creator`. Claude should respond by presenting the interview menu or asking what skill you want to create.
+
+---
 
 ## Usage examples
 
@@ -234,19 +186,215 @@ Start a new Claude Code session and type `/skill-creator`. Claude should respond
 [Iterates until user approves]
 ```
 
+---
+
+## Why this exists
+
+Creating a good skill requires a specific discipline: clearly defining triggers, expected behavior, constraints, and output format. Without structure, you end up with vague prompts that produce inconsistent results.
+
+The difference between asking Claude "help me write a skill" bare and using this tool is the structured interview. The menu forces you to think through purpose, triggers, complexity, tools, and output format before any generation happens. That specificity is what produces skills that work reliably instead of skills that work sometimes.
+
+The design philosophy comes from a deliberation process (LLM Council with 5 independent advisors and peer review) that converged on one principle: the conversation is the product, not the folder structure.
+
+---
+
+## How it works
+
+The Skill Creator operates in five phases.
+
+### Phase 1 - Menu interview
+
+The skill presents a structured menu with 7 questions:
+
+1. **Purpose** — What type of skill? (code generation, analysis, workflow, content, data processing, custom)
+2. **Trigger style** — Slash command, auto-detect, or both?
+3. **Tools needed** — None, file system, shell, web, or multiple?
+4. **Output format** — Code, text, structured data, mixed, or files + report?
+5. **Boundaries** — What should this skill explicitly REFUSE to do?
+6. **Autonomy level** — Ask before acting, act then confirm, or full autonomy?
+7. **Description + example** — What should the skill do, and what does a concrete input/output look like?
+
+If you provide a precise specification that answers these questions upfront, the menu is skipped and generation begins immediately. If you mention a non-Claude target LLM, the output is adapted to that platform's conventions.
+
+### Phase 2 - Generate first draft
+
+Based on your answers, the skill generates a complete structured markdown file with: trigger definition, numbered process steps, constraints (including your stated boundaries), and output format. Generated skills are capped at 150 lines — if longer, the skill is split. The file is placed in `~/.claude/skills/[skill-name]/SKILL.md`. The directory is created automatically if it does not exist.
+
+### Phase 3 - Council validation
+
+Before showing you the result, the generated skill is validated through one of two paths:
+
+**Path A — LLM Council (recommended):** If the `llm-council` skill is installed, the draft is submitted to 5 independent advisors who evaluate quality, safety, edge cases, and clarity. The verdict is presented to you with what works, what was flagged, and specific fixes. Fixes are applied before you see the final draft. This is real peer review, not self-evaluation.
+
+**Path B — Structural checklist (fallback):** If the Council is unavailable, the skill self-checks against 7 criteria: trigger clarity, imperative steps, constraints present (including boundaries you specified), output explicit, length under 150 lines, no contradictions, no trigger conflicts. Failures are fixed before showing you the result.
+
+**Note:** Council validation requires the `llm-council` skill to be installed separately. Running the full Council spawns 5 sub-agents and consumes additional tokens — this is a quality tradeoff, not a requirement. Without it, the fallback checklist is used automatically and still catches structural issues.
+
+### Phase 4 - Iterate with user
+
+The generated skill is shown to you with the question: "What would you change?" Based on your feedback, the skill is edited directly and shown again. This loop repeats until you are satisfied.
+
+### Phase 5 - Finalize and try it
+
+Once approved, the skill confirms:
+
+- The file location and trigger command
+- 2-3 edge cases to watch for
+- A concrete test instruction: "Open a new session and try: `[example prompt]`"
+
+The real test happens in a fresh session where the skill is loaded from disk. This is intentional — it is the only honest way to validate that the skill works as intended.
+
+---
+
+## Design principles
+
+1. **A skill is just a markdown file.** No build steps, no dependencies, no runtime. If you need more than a markdown file, you are building something else.
+
+2. **The conversation is the product.** The value lives in the structured interview that forces specificity. The menu extracts intent. The validation catches errors. The iteration refines.
+
+3. **Peer review over self-grading.** Generated skills are validated by the LLM Council (5 independent advisors), not by the same LLM that wrote them. The human makes the final call in a fresh session with a real task.
+
+4. **Ship then improve.** A working skill with rough edges beats a perfect design document. Generate, validate, iterate, test in a new session. Do not plan in the abstract.
+
+5. **No premature infrastructure.** No registries, no pattern libraries, no composition engines. Add complexity only when you have five working skills that demand it.
+
+6. **Honest about scope.** This tool is designed and tested for Claude Code. Generated skills are plain markdown that other LLMs may interpret, but no cross-platform guarantee is made without explicit testing.
+
+---
+
+## How Council validation works
+
+Every skill created by this tool passes through a quality assurance step before reaching you. Here is what happens concretely:
+
+1. The menu poses the 7 questions
+2. Claude generates a first draft of the skill
+3. The LLM Council intervenes — 5 independent advisors critique the generated skill (quality, safety, edge cases, clarity)
+4. The Council's corrections are applied to the draft
+5. You iterate on the result and test in a new session
+
+Each skill created goes through this peer review before being delivered to you. It is not Claude validating its own work — it is 5 distinct perspectives looking for flaws.
+
+### How the Council works internally
+
+The Council uses 5 thinking roles, each with a different angle of critique:
+
+| Role | Focus |
+| ---- | ----- |
+| The Contrarian | What will fail? What is missing? What is wrong? |
+| The First Principles Thinker | Is this solving the right problem? Strip assumptions. |
+| The Expansionist | What upside is being missed? What could be bigger? |
+| The Outsider | What would confuse someone with zero context? |
+| The Executor | Can this actually be done? What breaks in practice? |
+
+These are not 5 different AI models. They are 5 independent prompts to the same model, each constrained to a specific thinking style. The diversity comes from the roles, not from the architecture. This is adapted from Andrej Karpathy's LLM Council methodology.
+
+### Important nuances
+
+- **Optional:** If the `llm-council` skill is not installed, the Skill Creator falls back to a structural checklist (less thorough but functional)
+- **Token cost:** Running the full Council spawns 5 sub-agents, which consumes additional tokens. This is a quality tradeoff — you get better skills at higher cost per creation
+- **Not a permanent supervisor:** The Council runs once per skill creation, at Phase 3. It does not monitor skills after they are deployed
+
+---
+
+## Optional extensions
+
+### LLM Council (recommended)
+
+Phase 3 uses the `llm-council` skill for multi-perspective peer review of generated skills. Without it, a structural checklist is used as fallback — functional but less thorough.
+
+The Council skill is not bundled in this repo. It evolves independently and bundling would create silent version drift. Install it from its upstream source:
+
+```bash
+git clone https://github.com/tenfoldmarc/llm-council-skill.git
+mkdir -p ~/.claude/skills/llm-council
+cp llm-council-skill/SKILL.md ~/.claude/skills/llm-council/SKILL.md
+```
+
+On Windows (PowerShell):
+
+```powershell
+git clone https://github.com/tenfoldmarc/llm-council-skill.git
+New-Item -ItemType Directory -Force -Path $env:USERPROFILE\.claude\skills\llm-council
+Copy-Item llm-council-skill\SKILL.md $env:USERPROFILE\.claude\skills\llm-council\SKILL.md
+```
+
+Source: [tenfoldmarc/llm-council-skill](https://github.com/tenfoldmarc/llm-council-skill) — MIT License, adapted from Andrej Karpathy's LLM Council methodology.
+
+---
+
+## Requirements
+
+- Claude Code CLI (any recent version)
+- Works on any platform (Windows, macOS, Linux)
+- No external dependencies
+- No admin privileges required (copy installation; symlink option requires admin on Windows)
+- Optional: `llm-council` skill for full Council validation (see above)
+
+---
+
+## Uninstall
+
+Remove the skill directory:
+
+```bash
+rm -rf ~/.claude/skills/skill-creator
+```
+
+On Windows (PowerShell):
+
+```powershell
+Remove-Item -Recurse -Force $env:USERPROFILE\.claude\skills\skill-creator
+```
+
+If you used the symlink installation (Option 2), also remove the cloned repo:
+
+```bash
+rm -rf ~/projects/Claude-Skill-Creator
+```
+
+This leaves no other traces. No config files, no registry entries, no global state.
+
+---
+
 ## Project structure
 
 ```text
-skill-creator/
-  SKILL.md                        The skill itself
-  templates/
-    simple-skill.md               Example: commit message writer
-    multi-step-skill.md           Example: API scaffolder
-    interactive-skill.md          Example: doc translator
-    workflow-skill.md             Example: PR reviewer
-    data-processing-skill.md     Example: log analyzer
-  tests/
-    test-prompts.md              5 validation scenarios
+.
+│   .editorconfig
+│   .gitignore
+│   .markdownlint.json
+│   CHANGELOG.md
+│   CITATION.cff
+│   CODE_OF_CONDUCT.md
+│   CONTRIBUTING.md
+│   LICENSE
+│   README.md
+│
+├───.github
+│   │   CODEOWNERS
+│   │   FUNDING.yml
+│   │   PULL_REQUEST_TEMPLATE.md
+│   │   SECURITY.md
+│   │
+│   ├───ISSUE_TEMPLATE
+│   │       bug_report.md
+│   │       feature_request.md
+│   │
+│   └───workflows
+│           markdownlint.yml
+│
+└───skill-creator
+    │   SKILL.md
+    │
+    ├───templates
+    │       data-processing-skill.md
+    │       interactive-skill.md
+    │       multi-step-skill.md
+    │       simple-skill.md
+    │       workflow-skill.md
+    │
+    └───tests
+            test-prompts.md
 ```
 
 ### About the templates
@@ -275,74 +423,6 @@ The tests folder contains five scenarios covering:
 
 Use them to verify the skill creator behaves correctly after modifications.
 
-## Design principles
-
-1. **A skill is just a markdown file.** No build steps, no dependencies, no runtime. If you need more than a markdown file, you are building something else.
-
-2. **The conversation is the product.** The value lives in the structured interview that forces specificity. The menu extracts intent. The validation catches errors. The iteration refines.
-
-3. **Peer review over self-grading.** Generated skills are validated by the LLM Council (5 independent advisors), not by the same LLM that wrote them. The human makes the final call in a fresh session with a real task.
-
-4. **Ship then improve.** A working skill with rough edges beats a perfect design document. Generate, validate, iterate, test in a new session. Do not plan in the abstract.
-
-5. **No premature infrastructure.** No registries, no pattern libraries, no composition engines. Add complexity only when you have five working skills that demand it.
-
-6. **Honest about scope.** This tool is designed and tested for Claude Code. Generated skills are plain markdown that other LLMs may interpret, but no cross-platform guarantee is made without explicit testing.
-
-## Optional extensions
-
-### LLM Council (recommended)
-
-Phase 3 uses the `llm-council` skill for multi-perspective peer review of generated skills. Without it, a structural checklist is used as fallback — functional but less thorough.
-
-The Council skill is not bundled in this repo. It evolves independently and bundling would create silent version drift. Install it from its upstream source:
-
-```bash
-git clone https://github.com/tenfoldmarc/llm-council-skill.git
-mkdir -p ~/.claude/skills/llm-council
-cp llm-council-skill/SKILL.md ~/.claude/skills/llm-council/SKILL.md
-```
-
-On Windows (PowerShell):
-
-```powershell
-git clone https://github.com/tenfoldmarc/llm-council-skill.git
-New-Item -ItemType Directory -Force -Path $env:USERPROFILE\.claude\skills\llm-council
-Copy-Item llm-council-skill\SKILL.md $env:USERPROFILE\.claude\skills\llm-council\SKILL.md
-```
-
-Source: [tenfoldmarc/llm-council-skill](https://github.com/tenfoldmarc/llm-council-skill) — MIT License, adapted from Andrej Karpathy's LLM Council methodology.
-
-## Requirements
-
-- Claude Code CLI (any recent version)
-- Works on any platform (Windows, macOS, Linux)
-- No external dependencies
-- No admin privileges required (copy installation; symlink option requires admin on Windows)
-- Optional: `llm-council` skill for full Council validation (see above)
-
-## Uninstall
-
-Remove the skill directory:
-
-```bash
-rm -rf ~/.claude/skills/skill-creator
-```
-
-On Windows (PowerShell):
-
-```powershell
-Remove-Item -Recurse -Force $env:USERPROFILE\.claude\skills\skill-creator
-```
-
-If you used the symlink installation (Option 2), also remove the cloned repo:
-
-```bash
-rm -rf ~/projects/Claude-Skill-Creator
-```
-
-This leaves no other traces. No config files, no registry entries, no global state.
-
 ---
 
 ## Contributing
@@ -364,7 +444,17 @@ MIT License. See the LICENSE file for details.
 
 ---
 
-## Comment fonctionne Claude Skill Creator (FR)
+## Credits
+
+- Design methodology informed by three rounds of LLM Council deliberation (5 independent advisors with peer review, adapted from Andrej Karpathy's LLM Council concept)
+- LLM Council also serves as the runtime validation mechanism for generated skills
+- Built for use with Claude Code by Anthropic
+
+---
+
+<a id="documentation-en-francais"></a>
+<details>
+<summary><strong>Comment fonctionne Claude Skill Creator (FR)</strong></summary>
 
 ### En une phrase
 
@@ -450,10 +540,4 @@ Produit ~/.claude/skills/[nouvelle-skill]/SKILL.md
 
 Tout est markdown. Rien d'autre.
 
----
-
-## Credits
-
-- Design methodology informed by three rounds of LLM Council deliberation (5 independent advisors with peer review, adapted from Andrej Karpathy's LLM Council concept)
-- LLM Council also serves as the runtime validation mechanism for generated skills
-- Built for use with Claude Code by Anthropic
+</details>
