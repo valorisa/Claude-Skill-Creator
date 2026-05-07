@@ -36,17 +36,7 @@ Present this menu to the user and collect answers. Use the AskUserQuestion tool 
 - Data processing (parse, transform, extract, summarize)
 - Custom (describe freely)
 
-#### Question 2 — Target LLM
-
-> Which LLM will use this skill?
-
-- Claude Code (CLI by Anthropic)
-- Cursor AI
-- Windsurf / Codeium
-- ChatGPT / OpenAI
-- Any LLM (generic markdown format)
-
-#### Question 3 — Trigger style
+#### Question 2 — Trigger style
 
 > How should this skill activate?
 
@@ -54,15 +44,7 @@ Present this menu to the user and collect answers. Use the AskUserQuestion tool 
 - Auto-detect from natural language (trigger phrases)
 - Both (slash command + auto-detect)
 
-#### Question 4 — Complexity
-
-> How complex is the expected behavior?
-
-- Simple (one-shot: input → output, no questions asked)
-- Interactive (asks clarifying questions before acting)
-- Multi-phase (several distinct steps with checkpoints)
-
-#### Question 5 — Tools needed
+#### Question 3 — Tools needed
 
 > Does this skill need to use external tools?
 
@@ -72,7 +54,7 @@ Present this menu to the user and collect answers. Use the AskUserQuestion tool 
 - Web access (fetch URLs, search)
 - Multiple tools (specify which)
 
-#### Question 6 — Output format
+#### Question 4 — Output format
 
 > What should the skill produce?
 
@@ -82,13 +64,31 @@ Present this menu to the user and collect answers. Use the AskUserQuestion tool 
 - Mixed (code + explanation)
 - Files + summary report
 
-#### Question 7 — Description
+#### Question 5 — Boundaries
 
-> Describe in one or two sentences what the skill should do.
+> What should this skill explicitly REFUSE to do?
 
-(Free text — this is the creative core)
+(Examples: never delete files without confirmation, never modify code outside the target directory, never auto-commit, never send data externally)
+
+This is critical — boundaries prevent the skill from doing harm or overstepping scope.
+
+#### Question 6 — Autonomy level
+
+> Should this skill ask before acting, or act then confirm?
+
+- Ask first (always confirm before making changes)
+- Act then confirm (do the work, then show the result for approval)
+- Full autonomy (execute without asking — only for safe, read-only operations)
+
+#### Question 7 — Description and example
+
+> Describe in one or two sentences what the skill should do. Then give one concrete example: what input would you provide, and what output do you expect?
+
+(Free text — the description gives intent, the example anchors the generation)
 
 If the user provides a precise specification upfront that answers most of these questions, skip the menu and move directly to Phase 2. Adapt — do not rigidly follow the menu when the intent is already clear.
+
+If the user mentions a non-Claude target LLM (Cursor, Windsurf, etc.), adapt the output format to that platform's conventions. Otherwise, default to Claude Code.
 
 ### Phase 2 — Generate first draft
 

@@ -37,32 +37,28 @@ The Skill Creator operates in five phases.
 The skill presents a structured menu with 7 questions:
 
 1. **Purpose** — What type of skill? (code generation, analysis, workflow, content, data processing, custom)
-2. **Target LLM** — Which LLM will use it? (Claude Code, Cursor, Windsurf, ChatGPT, generic)
-3. **Trigger style** — Slash command, auto-detect, or both?
-4. **Complexity** — Simple one-shot, interactive, or multi-phase?
-5. **Tools needed** — None, file system, shell, web, or multiple?
-6. **Output format** — Code, text, structured data, mixed, or files + report?
-7. **Description** — What should the skill do? (free text)
+2. **Trigger style** — Slash command, auto-detect, or both?
+3. **Tools needed** — None, file system, shell, web, or multiple?
+4. **Output format** — Code, text, structured data, mixed, or files + report?
+5. **Boundaries** — What should this skill explicitly REFUSE to do?
+6. **Autonomy level** — Ask before acting, act then confirm, or full autonomy?
+7. **Description + example** — What should the skill do, and what does a concrete input/output look like?
 
-If you provide a precise specification that answers these questions upfront, the menu is skipped and generation begins immediately.
+If you provide a precise specification that answers these questions upfront, the menu is skipped and generation begins immediately. If you mention a non-Claude target LLM, the output is adapted to that platform's conventions.
 
 ### Phase 2 - Generate first draft
 
-Based on your answers, the skill generates a complete structured markdown file with: trigger definition, numbered process steps, constraints, and output format. The file is placed in the correct location for your target LLM. The directory is created automatically if it does not exist.
+Based on your answers, the skill generates a complete structured markdown file with: trigger definition, numbered process steps, constraints (including your stated boundaries), and output format. Generated skills are capped at 150 lines — if longer, the skill is split. The file is placed in `~/.claude/skills/[skill-name]/SKILL.md`. The directory is created automatically if it does not exist.
 
 ### Phase 3 - Council validation
 
-Before showing you the result, the generated skill is submitted to the LLM Council for peer review (5 independent advisors evaluate quality, safety, edge cases, and clarity). The Council verdict is presented to you:
+Before showing you the result, the generated skill is validated through one of two paths:
 
-- What works well (consensus)
-- What was flagged as problematic
-- Specific fixes recommended
+**Path A — LLM Council (recommended):** If the `llm-council` skill is installed, the draft is submitted to 5 independent advisors who evaluate quality, safety, edge cases, and clarity. The verdict is presented to you with what works, what was flagged, and specific fixes. Fixes are applied before you see the final draft. This is real peer review, not self-evaluation.
 
-Recommended fixes are applied before you see the final draft. This is real peer review, not self-evaluation.
+**Path B — Structural checklist (fallback):** If the Council is unavailable, the skill self-checks against 7 criteria: trigger clarity, imperative steps, constraints present (including boundaries you specified), output explicit, length under 150 lines, no contradictions, no trigger conflicts. Failures are fixed before showing you the result.
 
-If the LLM Council skill is not available, a structural checklist is used as fallback (trigger clarity, imperative steps, constraints present, output explicit, length under 150 lines, no contradictions, no conflicts).
-
-**Note:** Council validation requires the `llm-council` skill to be installed separately. Without it, the fallback checklist is used automatically. Running the full Council spawns 5 sub-agents and consumes additional tokens — this is a quality tradeoff, not a requirement.
+**Note:** Council validation requires the `llm-council` skill to be installed separately. Running the full Council spawns 5 sub-agents and consumes additional tokens — this is a quality tradeoff, not a requirement. Without it, the fallback checklist is used automatically and still catches structural issues.
 
 ### Phase 4 - Iterate with user
 
@@ -140,13 +136,16 @@ Start a new Claude Code session and type `/skill-creator`. Claude should respond
 [Claude presents the 7-question menu]
 
 > Purpose: Code analysis
-> Target: Claude Code
-> Trigger: /explain-error
-> Complexity: Simple
+> Trigger: /explain-error (slash command)
 > Tools: None
 > Output: Text response
+> Boundaries: Never guess if unsure — say "I don't recognize
+  this error" instead of inventing explanations
+> Autonomy: Act then confirm (show explanation, ask if helpful)
 > Description: Takes an error message and explains what it means,
-  why it happened, and how to fix it in plain language.
+  why it happened, and how to fix it.
+  Example input: "TypeError: Cannot read properties of undefined"
+  Example output: A 3-paragraph explanation with cause + fix.
 
 [Claude generates the skill]
 [LLM Council reviews it: 5 advisors evaluate quality and safety]
@@ -175,16 +174,19 @@ Start a new Claude Code session and type `/skill-creator`. Claude should respond
 > /skill-creator
 
 > Purpose: Content creation
-> Target: Cursor AI
 > Trigger: Auto-detect when user writes "generate docs"
-> Complexity: Interactive
 > Tools: File system
 > Output: Code (markdown files)
+> Boundaries: Never modify source files, only generate new doc files
+> Autonomy: Ask first (confirm which files to document)
 > Description: Generate API documentation from source code comments
-  and function signatures.
+  and function signatures. Target: Cursor AI.
+  Example input: a TypeScript file with exported functions
+  Example output: a markdown file with function signatures + descriptions
 
-[Claude adapts output to Cursor conventions]
-[Generates a .cursor/rules/ compatible file]
+[Claude detects "Target: Cursor AI" in description]
+[Adapts output to .cursor/rules/ conventions]
+[Council validates, iterates, finalizes]
 ```
 
 ### Example 4 — Improve an existing skill

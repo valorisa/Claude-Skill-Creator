@@ -8,20 +8,20 @@ Use these to verify the skill works correctly. Open a new Claude Code session fo
 
 Expected behavior:
 
-- The skill presents the menu questions (purpose, target LLM, trigger style, etc.)
+- The skill presents the 7 menu questions (purpose, trigger, tools, output, boundaries, autonomy, description+example)
 - After collecting answers, it generates a structured SKILL.md
-- It validates the output before showing it
+- It validates the output (Council or checklist) before showing it
 - It asks for feedback and iterates
 
 ## Test 2 — Precise request (menu should be skipped)
 
-> "Create a skill called 'sql-explainer' that takes a SQL query and explains it step by step in plain French. Trigger: /sql-explain. Target: Claude Code. No tools needed. Output: text explanation displayed to user."
+> "Create a skill called 'sql-explainer' that takes a SQL query and explains it step by step in plain French. Trigger: /sql-explain. No tools needed. Output: text explanation. Boundaries: never execute the query, only explain. Autonomy: act directly. Example: input 'SELECT * FROM users WHERE age > 18' → output explains the query in 3 bullet points."
 
 Expected behavior:
 
 - The skill recognizes that all questions are answered
 - It generates immediately without asking the menu
-- It runs structural validation
+- It validates (Council or checklist)
 - It shows the result and asks for feedback
 
 ## Test 3 — Improvement of existing skill
