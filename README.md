@@ -358,6 +358,92 @@ Areas where contributions would be particularly valuable:
 
 MIT License. See the LICENSE file for details.
 
+## Comment fonctionne Claude Skill Creator (FR)
+
+### En une phrase
+
+C'est un fichier markdown (`SKILL.md`) qui dit à Claude Code comment vous guider dans la création d'autres fichiers markdown (skills).
+
+### Le principe
+
+Quand vous tapez `/skill-creator` dans Claude Code, Claude lit le fichier `~/.claude/skills/skill-creator/SKILL.md` et suit ses instructions à la lettre. Ce fichier décrit un processus en 5 phases.
+
+### Phase 1 — Menu (7 questions)
+
+Claude vous pose 7 questions pour comprendre ce que vous voulez :
+
+| # | Question | Pourquoi |
+| - | -------- | -------- |
+| 1 | Quel type de skill ? | Choisir le bon pattern |
+| 2 | Quel déclencheur ? | Slash command, auto-détection, ou les deux |
+| 3 | Quels outils ? | Ce que la skill pourra faire (fichiers, shell, web) |
+| 4 | Quel format de sortie ? | Code, texte, données structurées, mixte |
+| 5 | Que doit-elle REFUSER de faire ? | Garde-fous et limites |
+| 6 | Niveau d'autonomie ? | Demander avant d'agir, ou agir directement |
+| 7 | Description + exemple concret | L'intent + un cas réel d'input/output |
+
+Si vous donnez une spec précise d'entrée, le menu est sauté.
+
+### Phase 2 — Génération
+
+Claude écrit un fichier SKILL.md complet avec :
+
+- Un avertissement de sécurité (permissions, pas d'opérations destructives sans confirmation)
+- Section Trigger
+- Section Process (étapes numérotées, impératives)
+- Section Constraints (dont vos boundaries de la Q5)
+- Section Output
+
+Le fichier est plafonné à 150 lignes. Le dossier est créé automatiquement.
+
+### Phase 3 — Validation par le Council
+
+**Si `llm-council` est installé :** 5 conseillers indépendants critiquent la skill générée :
+
+| Rôle | Question posée |
+| ---- | -------------- |
+| Contrarian | Qu'est-ce qui va casser ? |
+| First Principles | Est-ce le bon problème ? |
+| Expansionist | Qu'est-ce qu'on rate ? |
+| Outsider | C'est confus pour un nouveau ? |
+| Executor | Ça marche en pratique ? |
+
+Leurs corrections sont appliquées avant de vous montrer le résultat.
+
+**Si `llm-council` n'est pas installé :** une checklist structurelle vérifie 7 critères (trigger clair, étapes impératives, contraintes présentes, output explicite, < 150 lignes, pas de contradictions, pas de conflits).
+
+### Phase 4 — Itération
+
+Claude vous montre le résultat et demande : "Qu'est-ce que tu changerais ?" Vous donnez du feedback, Claude corrige, vous redemande. Boucle infinie jusqu'à votre satisfaction.
+
+### Phase 5 — Finalisation + vrai test
+
+Claude confirme l'emplacement du fichier, suggère 2-3 edge cases, et vous dit :
+
+> "Ouvre une nouvelle session et essaie : [prompt concret]"
+
+Le vrai test se fait dans une session fraîche où la skill est chargée depuis le disque.
+
+### Ce que l'utilisateur installe
+
+Uniquement le dossier `skill-creator/` copié dans `~/.claude/skills/`. Le reste (README, .github, etc.) c'est l'habillage GitHub pour la communauté.
+
+### La chaîne de dépendances
+
+```text
+L'utilisateur tape /skill-creator
+        ↓
+Claude Code lit ~/.claude/skills/skill-creator/SKILL.md
+        ↓
+Suit le processus en 5 phases
+        ↓
+(optionnel) Invoque ~/.claude/skills/llm-council/SKILL.md pour valider
+        ↓
+Produit ~/.claude/skills/[nouvelle-skill]/SKILL.md
+```
+
+Tout est markdown. Rien d'autre.
+
 ## Credits
 
 - Design methodology informed by three rounds of LLM Council deliberation (5 independent advisors with peer review, adapted from Andrej Karpathy's LLM Council concept)
