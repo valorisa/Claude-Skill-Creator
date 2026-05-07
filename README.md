@@ -1,5 +1,7 @@
 # Claude Skill Creator
 
+> **In short:** Claude Code is Anthropic's CLI tool for AI-assisted development. A "skill" is a markdown file that tells Claude Code how to behave when triggered. This repo gives you an automated workflow to create those skills well, instead of writing them from scratch by trial and error.
+
 A meta-skill for Claude Code that helps you create, test, iterate, and improve custom skills through a structured menu-driven conversational workflow. Skills are plain markdown — other LLMs can interpret them, but only Claude Code has been tested.
 
 ## What is a skill
@@ -60,6 +62,8 @@ Recommended fixes are applied before you see the final draft. This is real peer 
 
 If the LLM Council skill is not available, a structural checklist is used as fallback (trigger clarity, imperative steps, constraints present, output explicit, length under 150 lines, no contradictions, no conflicts).
 
+**Note:** Council validation requires the `llm-council` skill to be installed separately. Without it, the fallback checklist is used automatically. Running the full Council spawns 5 sub-agents and consumes additional tokens — this is a quality tradeoff, not a requirement.
+
 ### Phase 4 - Iterate with user
 
 The generated skill is shown to you with the question: "What would you change?" Based on your feedback, the skill is edited directly and shown again. This loop repeats until you are satisfied.
@@ -106,6 +110,8 @@ Test-Path $env:USERPROFILE\.claude\skills\skill-creator\SKILL.md
 
 ### Option 2 - Symlink for easy updates
 
+Clone to any location you prefer (adjust paths as needed):
+
 On macOS/Linux:
 
 ```bash
@@ -142,8 +148,10 @@ Start a new Claude Code session and type `/skill-creator`. Claude should respond
 > Description: Takes an error message and explains what it means,
   why it happened, and how to fix it in plain language.
 
-[Claude generates, validates, and shows the skill]
-[User iterates until satisfied]
+[Claude generates the skill]
+[LLM Council reviews it: 5 advisors evaluate quality and safety]
+[Council verdict shown: what works, what to fix]
+[Fixes applied, user iterates until satisfied]
 [Claude says: "Open a new session and try: paste an error message
  and say /explain-error"]
 ```
@@ -158,7 +166,7 @@ Start a new Claude Code session and type `/skill-creator`. Claude should respond
 
 [Claude recognizes all parameters are provided]
 [Generates immediately without menu]
-[Validates structure, shows result, iterates]
+[Council validates, shows verdict, iterates]
 ```
 
 ### Example 3 — Create a skill for a different LLM
@@ -239,7 +247,7 @@ Use them to verify the skill creator behaves correctly after modifications.
 
 2. **The conversation is the product.** The value lives in the structured interview that forces specificity. The menu extracts intent. The validation catches errors. The iteration refines.
 
-3. **The human is the evaluator.** No automated scoring or rubrics. You test in a fresh session with a real task. That is the fastest and most reliable validation.
+3. **Peer review over self-grading.** Generated skills are validated by the LLM Council (5 independent advisors), not by the same LLM that wrote them. The human makes the final call in a fresh session with a real task.
 
 4. **Ship then improve.** A working skill with rough edges beats a perfect design document. Generate, validate, iterate, test in a new session. Do not plan in the abstract.
 
@@ -252,7 +260,8 @@ Use them to verify the skill creator behaves correctly after modifications.
 - Claude Code CLI (any recent version)
 - Works on any platform (Windows, macOS, Linux)
 - No external dependencies
-- No admin privileges required (copy installation)
+- No admin privileges required (copy installation; symlink option requires admin on Windows)
+- Optional: `llm-council` skill for full Council validation (falls back to checklist without it)
 
 ## Uninstall
 
@@ -266,6 +275,12 @@ On Windows (PowerShell):
 
 ```powershell
 Remove-Item -Recurse -Force $env:USERPROFILE\.claude\skills\skill-creator
+```
+
+If you used the symlink installation (Option 2), also remove the cloned repo:
+
+```bash
+rm -rf ~/projects/Claude-Skill-Creator
 ```
 
 This leaves no other traces. No config files, no registry entries, no global state.
@@ -287,5 +302,6 @@ MIT License. See the LICENSE file for details.
 
 ## Credits
 
-- Design methodology informed by two rounds of LLM Council deliberation (5 independent advisors with peer review, adapted from Andrej Karpathy's LLM Council concept)
-- Built for use with Claude Code by Anthropic and compatible with other LLMs
+- Design methodology informed by three rounds of LLM Council deliberation (5 independent advisors with peer review, adapted from Andrej Karpathy's LLM Council concept)
+- LLM Council also serves as the runtime validation mechanism for generated skills
+- Built for use with Claude Code by Anthropic

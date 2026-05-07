@@ -13,7 +13,7 @@ Different LLMs load skills from different locations:
 - Windsurf: `.windsurfrules`
 - Generic: any markdown file referenced in a system prompt
 
-The format this tool generates works across all of them with minor path adjustments.
+This tool is designed and tested for Claude Code. Other LLMs may interpret the generated markdown, but cross-platform compatibility is not guaranteed.
 
 ## Trigger
 
