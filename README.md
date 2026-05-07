@@ -343,6 +343,8 @@ rm -rf ~/projects/Claude-Skill-Creator
 
 This leaves no other traces. No config files, no registry entries, no global state.
 
+---
+
 ## Contributing
 
 Contributions are welcome. The bar for inclusion is simple: does this change make it faster to go from intent to working skill? If yes, open a pull request.
@@ -354,9 +356,13 @@ Areas where contributions would be particularly valuable:
 - Adaptations for additional LLM platforms
 - Bug reports from edge cases encountered during real usage
 
+---
+
 ## License
 
 MIT License. See the LICENSE file for details.
+
+---
 
 ## Comment fonctionne Claude Skill Creator (FR)
 
@@ -443,6 +449,8 @@ Produit ~/.claude/skills/[nouvelle-skill]/SKILL.md
 ```
 
 Tout est markdown. Rien d'autre.
+
+---
 
 ## Credits
 
