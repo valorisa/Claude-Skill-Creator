@@ -289,13 +289,37 @@ Use them to verify the skill creator behaves correctly after modifications.
 
 6. **Honest about scope.** This tool is designed and tested for Claude Code. Generated skills are plain markdown that other LLMs may interpret, but no cross-platform guarantee is made without explicit testing.
 
+## Optional extensions
+
+### LLM Council (recommended)
+
+Phase 3 uses the `llm-council` skill for multi-perspective peer review of generated skills. Without it, a structural checklist is used as fallback — functional but less thorough.
+
+The Council skill is not bundled in this repo. It evolves independently and bundling would create silent version drift. Install it from its upstream source:
+
+```bash
+git clone https://github.com/tenfoldmarc/llm-council-skill.git
+mkdir -p ~/.claude/skills/llm-council
+cp llm-council-skill/SKILL.md ~/.claude/skills/llm-council/SKILL.md
+```
+
+On Windows (PowerShell):
+
+```powershell
+git clone https://github.com/tenfoldmarc/llm-council-skill.git
+New-Item -ItemType Directory -Force -Path $env:USERPROFILE\.claude\skills\llm-council
+Copy-Item llm-council-skill\SKILL.md $env:USERPROFILE\.claude\skills\llm-council\SKILL.md
+```
+
+Source: [tenfoldmarc/llm-council-skill](https://github.com/tenfoldmarc/llm-council-skill) — MIT License, adapted from Andrej Karpathy's LLM Council methodology.
+
 ## Requirements
 
 - Claude Code CLI (any recent version)
 - Works on any platform (Windows, macOS, Linux)
 - No external dependencies
 - No admin privileges required (copy installation; symlink option requires admin on Windows)
-- Optional: `llm-council` skill for full Council validation (falls back to checklist without it)
+- Optional: `llm-council` skill for full Council validation (see above)
 
 ## Uninstall
 

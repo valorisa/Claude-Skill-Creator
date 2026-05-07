@@ -190,6 +190,24 @@ This is the real test. A new session ensures the skill is loaded fresh and behav
 - On Windows, use copy operations — never suggest symlinks without warning about admin privileges.
 - Generate skills that are LLM-agnostic in their instructions unless the user specifies a target.
 
+## Optional extensions
+
+### LLM Council (recommended for full validation)
+
+Phase 3 uses the `llm-council` skill for multi-perspective peer review. Without it, a structural checklist is used as fallback.
+
+To install the Council skill:
+
+```bash
+git clone https://github.com/tenfoldmarc/llm-council-skill.git
+mkdir -p ~/.claude/skills/llm-council
+cp llm-council-skill/SKILL.md ~/.claude/skills/llm-council/SKILL.md
+```
+
+Source: [tenfoldmarc/llm-council-skill](https://github.com/tenfoldmarc/llm-council-skill) — MIT License, adapted from Andrej Karpathy's LLM Council methodology.
+
+The Council skill is not bundled in this repo to avoid version drift. It evolves independently and should be updated from its upstream source.
+
 ## Output
 
 A working skill file, validated and iterated to the user's satisfaction, placed in the correct location for their target LLM.
