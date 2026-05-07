@@ -1,150 +1,256 @@
 # Claude Skill Creator
 
-A meta-skill for Claude Code that helps you create, test, iterate, and improve custom skills through a structured conversational workflow.
+A meta-skill for Claude Code (and other LLMs) that helps you create, test, iterate, and improve custom skills through a structured menu-driven conversational workflow.
 
-## What is this
+## What is a skill
 
-Claude Skill Creator is a skill for Claude Code (the CLI tool by Anthropic) that guides you through the process of building new skills from scratch. It follows a proven iterative loop: interview your intent, generate a first draft, smoke-test it immediately, and refine until you are satisfied.
+A skill is a markdown file placed in a known directory that instructs an LLM how to behave when a specific trigger is detected. The LLM reads the file and follows the instructions. No runtime, no compilation, no API — just structured text that shapes behavior.
 
-A skill is just a markdown file. Nothing more. This tool embraces that simplicity.
+Different LLMs load skills from different locations:
+
+| LLM | Skill location |
+| --- | -------------- |
+| Claude Code | `~/.claude/skills/[skill-name]/SKILL.md` |
+| Cursor AI | `.cursorrules` or `.cursor/rules/` |
+| Windsurf | `.windsurfrules` |
+| ChatGPT | Custom instructions or system prompt |
+| Generic | Any markdown file referenced in context |
+
+The format this tool generates works across all of them with minor path adjustments.
 
 ## Why this exists
 
-Creating a good skill requires a specific discipline: clearly defining triggers, expected behavior, constraints, and output format. Without structure, you end up with vague prompts that produce inconsistent results. This skill provides that structure as a guided conversation rather than a complex framework or infrastructure.
+Creating a good skill requires a specific discipline: clearly defining triggers, expected behavior, constraints, and output format. Without structure, you end up with vague prompts that produce inconsistent results.
 
-The design philosophy comes from a deliberation process (LLM Council) that converged on one principle: the conversation is the product, not the folder structure. Every decision in this tool optimizes for getting you from vague intent to working skill in the shortest possible feedback loop.
+The difference between asking Claude "help me write a skill" bare and using this tool is the structured interview. The menu forces you to think through purpose, triggers, complexity, tools, and output format before any generation happens. That specificity is what produces skills that work reliably instead of skills that work sometimes.
+
+The design philosophy comes from a deliberation process (LLM Council with 5 independent advisors and peer review) that converged on one principle: the conversation is the product, not the folder structure.
 
 ## How it works
 
 The Skill Creator operates in five phases.
 
-### Phase 1 - Interview
+### Phase 1 - Menu interview
 
-Claude asks you targeted questions to extract your intent:
+The skill presents a structured menu with 7 questions:
 
-- What should the skill do (one sentence)
-- When should it trigger (slash command, auto-detect phrases, or both)
-- What does good output look like (concrete example)
-- What should it NOT do (boundaries and failure modes)
-- Does it need specific tools (file access, bash, web, agents)
+1. **Purpose** — What type of skill? (code generation, analysis, workflow, content, data processing, custom)
+2. **Target LLM** — Which LLM will use it? (Claude Code, Cursor, Windsurf, ChatGPT, generic)
+3. **Trigger style** — Slash command, auto-detect, or both?
+4. **Complexity** — Simple one-shot, interactive, or multi-phase?
+5. **Tools needed** — None, file system, shell, web, or multiple?
+6. **Output format** — Code, text, structured data, mixed, or files + report?
+7. **Description** — What should the skill do? (free text)
 
-If you are vague, Claude proposes a concrete interpretation and asks for confirmation.
+If you provide a precise specification that answers these questions upfront, the menu is skipped and generation begins immediately.
 
 ### Phase 2 - Generate first draft
 
-Based on your answers, Claude writes a complete SKILL.md with proper structure: trigger definition, numbered process steps, constraints, and output format. The file lands directly in your skills directory.
+Based on your answers, the skill generates a complete structured markdown file with: trigger definition, numbered process steps, constraints, and output format. The file is placed in the correct location for your target LLM. The directory is created automatically if it does not exist.
 
-### Phase 3 - Smoke test
+### Phase 3 - Structural validation
 
-Claude immediately proposes 2-3 realistic test prompts, simulates how the new skill would respond, and shows you the result. You evaluate whether the output matches your expectations.
+Before showing you the result, the skill silently validates:
 
-### Phase 4 - Iterate
+- Clear trigger description present?
+- Process steps are numbered and imperative?
+- At least 2 constraints defined?
+- Output format is explicit?
+- Total length under 150 lines?
+- No contradictions with known LLM behaviors?
+- No conflicts with existing skill triggers?
 
-Based on your feedback, Claude edits the skill and re-runs the test. This loop repeats until you say it is done. No artificial stopping point.
+Failures are auto-corrected before you see the output.
 
-### Phase 5 - Finalize
+### Phase 4 - Iterate with user
 
-Once satisfied, Claude confirms the skill location, suggests edge cases to watch for, and reminds you that you can return to improve it anytime.
+The generated skill is shown to you with the question: "What would you change?" Based on your feedback, the skill is edited directly and shown again. This loop repeats until you are satisfied.
+
+### Phase 5 - Finalize and try it
+
+Once approved, the skill confirms:
+
+- The file location and trigger command
+- 2-3 edge cases to watch for
+- A concrete test instruction: "Open a new session and try: `[example prompt]`"
+
+The real test happens in a fresh session where the skill is loaded from disk. This is intentional — it is the only honest way to validate that the skill works as intended.
 
 ## Installation
 
-### Option 1 - Copy to your skills directory
-
-Clone this repository and copy the skill-creator folder to your Claude Code skills directory:
+### Option 1 - Copy to your skills directory (recommended)
 
 ```bash
-git clone https://github.com/valorisa/claude-skill-creator.git
-cp -r claude-skill-creator/skill-creator ~/.claude/skills/
+git clone https://github.com/valorisa/Claude-Skill-Creator.git
+cp -r Claude-Skill-Creator/skill-creator ~/.claude/skills/skill-creator
+```
+
+On Windows (PowerShell):
+
+```powershell
+git clone https://github.com/valorisa/Claude-Skill-Creator.git
+Copy-Item -Recurse Claude-Skill-Creator\skill-creator $env:USERPROFILE\.claude\skills\skill-creator
 ```
 
 ### Option 2 - Symlink for easy updates
 
+On macOS/Linux:
+
 ```bash
-git clone https://github.com/valorisa/claude-skill-creator.git
-ln -s "$(pwd)/claude-skill-creator/skill-creator" ~/.claude/skills/skill-creator
+git clone https://github.com/valorisa/Claude-Skill-Creator.git ~/projects/Claude-Skill-Creator
+ln -s ~/projects/Claude-Skill-Creator/skill-creator ~/.claude/skills/skill-creator
+```
+
+On Windows (requires Administrator or Developer Mode):
+
+```powershell
+git clone https://github.com/valorisa/Claude-Skill-Creator.git $env:USERPROFILE\projects\Claude-Skill-Creator
+New-Item -ItemType SymbolicLink -Path $env:USERPROFILE\.claude\skills\skill-creator -Target $env:USERPROFILE\projects\Claude-Skill-Creator\skill-creator
 ```
 
 ### Verify installation
 
-Start a new Claude Code session and type `/skill-creator`. Claude should respond by asking what skill you want to create.
+Start a new Claude Code session and type `/skill-creator`. Claude should respond by presenting the interview menu or asking what skill you want to create.
 
-## Usage
+## Usage examples
 
-### Create a new skill from scratch
+### Example 1 — Create a skill from the menu
 
 ```text
 > /skill-creator
-> "I want a skill that translates error messages into plain French explanations"
+
+[Claude presents the 7-question menu]
+
+> Purpose: Code analysis
+> Target: Claude Code
+> Trigger: /explain-error
+> Complexity: Simple
+> Tools: None
+> Output: Text response
+> Description: Takes an error message and explains what it means,
+  why it happened, and how to fix it in plain language.
+
+[Claude generates, validates, and shows the skill]
+[User iterates until satisfied]
+[Claude says: "Open a new session and try: paste an error message
+ and say /explain-error"]
 ```
 
-Claude will interview you, generate the skill, test it, and iterate with you.
-
-### Create a skill with a precise specification
+### Example 2 — Skip the menu with a precise spec
 
 ```text
-> Create a skill called 'sql-explainer' that takes a SQL query and explains it
-  step by step in plain French. Trigger: /sql-explain. No tools needed.
+> Create a skill called 'changelog-gen' for Claude Code that reads
+  git log since last tag, groups commits by type (feat/fix/chore),
+  and generates a CHANGELOG.md entry. Trigger: /changelog.
+  Needs shell access for git commands. Output: markdown file.
+
+[Claude recognizes all parameters are provided]
+[Generates immediately without menu]
+[Validates structure, shows result, iterates]
 ```
 
-When your request is specific enough, Claude skips most questions and generates directly.
-
-### Improve an existing skill
+### Example 3 — Create a skill for a different LLM
 
 ```text
-> My existing skill /review is too verbose. Help me tighten it.
+> /skill-creator
+
+> Purpose: Content creation
+> Target: Cursor AI
+> Trigger: Auto-detect when user writes "generate docs"
+> Complexity: Interactive
+> Tools: File system
+> Output: Code (markdown files)
+> Description: Generate API documentation from source code comments
+  and function signatures.
+
+[Claude adapts output to Cursor conventions]
+[Generates a .cursor/rules/ compatible file]
 ```
 
-Claude reads the existing skill, identifies issues, and iterates with you.
+### Example 4 — Improve an existing skill
+
+```text
+> My skill /pr-review takes too long and gives too many nitpick
+  suggestions. Help me tighten it to focus only on bugs and
+  security issues.
+
+[Claude reads the existing skill]
+[Identifies verbose sections and low-priority checks]
+[Proposes targeted edits]
+[Iterates until user approves]
+```
 
 ## Project structure
 
 ```text
 skill-creator/
-  SKILL.md              The skill definition
+  SKILL.md                        The skill itself
   templates/
-    simple-skill.md     Example: single-purpose skill
-    multi-step-skill.md Example: multi-phase skill
+    simple-skill.md               Example: commit message writer
+    multi-step-skill.md           Example: API scaffolder
+    interactive-skill.md          Example: doc translator
+    workflow-skill.md             Example: PR reviewer
+    data-processing-skill.md     Example: log analyzer
   tests/
-    test-prompts.md     Validation scenarios
+    test-prompts.md              5 validation scenarios
 ```
 
 ### About the templates
 
-The templates folder contains two reference skills of different complexity levels. They serve as pattern references for Claude when generating your new skill, not as rigid scaffolding to fill in. Claude adapts the structure to match what your skill actually needs.
+The templates folder contains five reference skills covering different categories:
+
+| Template | Type | Complexity | Tools |
+| -------- | ---- | ---------- | ----- |
+| simple-skill.md | Code generation | Simple | Shell (git) |
+| multi-step-skill.md | Code generation | Multi-phase | File system |
+| interactive-skill.md | Content creation | Interactive | File system |
+| workflow-skill.md | Code analysis | Multi-phase | Shell (gh) |
+| data-processing-skill.md | Data processing | Interactive | File system |
+
+They serve as pattern references for the LLM when generating your new skill. The LLM adapts structure and depth to match what your skill actually needs.
 
 ### About the tests
 
-The tests folder contains three scenarios covering different use cases: vague requests, precise specifications, and improvement of existing skills. Use them to verify the skill creator behaves correctly after any modifications you make.
+The tests folder contains five scenarios covering:
+
+1. Vague request (menu should appear and guide the user)
+2. Precise specification (menu should be skipped)
+3. Improvement of existing skill (read, analyze, propose edits)
+4. Non-Claude target LLM (adapt to different conventions)
+5. Complex multi-tool skill (handle dependencies and edge cases)
+
+Use them to verify the skill creator behaves correctly after modifications.
 
 ## Design principles
 
-These principles guided every decision in this tool:
-
 1. **A skill is just a markdown file.** No build steps, no dependencies, no runtime. If you need more than a markdown file, you are building something else.
 
-2. **The conversation is the product.** The value lives in the interactive loop, not in folder structure or infrastructure. The interview extracts intent. The test validates it. The iteration refines it.
+2. **The conversation is the product.** The value lives in the structured interview that forces specificity. The menu extracts intent. The validation catches errors. The iteration refines.
 
-3. **The human is the evaluator.** No automated scoring, no rubrics, no eval frameworks. You look at the output and decide if it is good. That is the fastest and most reliable evaluation system at individual scale.
+3. **The human is the evaluator.** No automated scoring or rubrics. You test in a fresh session with a real task. That is the fastest and most reliable validation.
 
-4. **Ship then improve.** A working skill with rough edges beats a perfect design document. Generate, test, iterate. Do not plan in the abstract.
+4. **Ship then improve.** A working skill with rough edges beats a perfect design document. Generate, validate, iterate, test in a new session. Do not plan in the abstract.
 
 5. **No premature infrastructure.** No registries, no pattern libraries, no composition engines. Add complexity only when you have five working skills that demand it.
 
+6. **LLM-agnostic by default.** Skills generated by this tool should work across LLMs with minimal adaptation. Target-specific conventions are applied only when a specific LLM is selected.
+
 ## Requirements
 
-- Claude Code CLI (any recent version)
-- A Claude model with tool access (Opus, Sonnet, or Haiku)
+- Claude Code CLI (any recent version) or any LLM that can read markdown instructions
 - Works on any platform (Windows, macOS, Linux)
 - No external dependencies
+- No admin privileges required (copy installation)
 
 ## Contributing
 
-Contributions are welcome. The bar for inclusion is simple: does this change make it faster to go from intent to working skill? If yes, open a pull request. If you are adding infrastructure, explain why the current simplicity is insufficient for your use case.
+Contributions are welcome. The bar for inclusion is simple: does this change make it faster to go from intent to working skill? If yes, open a pull request.
 
 Areas where contributions would be particularly valuable:
 
-- Additional template examples covering different skill categories
+- Additional template examples covering new skill categories
 - Translations of the SKILL.md for non-English users
+- Adaptations for additional LLM platforms
 - Bug reports from edge cases encountered during real usage
 
 ## License
@@ -153,5 +259,5 @@ MIT License. See the LICENSE file for details.
 
 ## Credits
 
-- Design methodology informed by an LLM Council deliberation (5 independent advisors with peer review, adapted from Andrej Karpathy's LLM Council concept)
-- Built for use with Claude Code by Anthropic
+- Design methodology informed by two rounds of LLM Council deliberation (5 independent advisors with peer review, adapted from Andrej Karpathy's LLM Council concept)
+- Built for use with Claude Code by Anthropic and compatible with other LLMs

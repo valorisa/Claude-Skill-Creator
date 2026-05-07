@@ -1,24 +1,29 @@
-# Code Reviewer
+# Commit Message Writer
 
-Review code changes for bugs, security issues, and style.
+Generate clear, conventional commit messages from staged changes.
 
 ## Trigger
 
-Use when the user says "review this", "check my code", `/review`, or pastes a code diff.
+Use when the user says "write commit", "commit message", `/commit-msg`, or asks for help with a git commit message.
 
 ## Process
 
-1. Read the code or diff provided
-2. Check for: bugs, security vulnerabilities, performance issues, readability
-3. For each issue found, state: the line, the problem, and a fix
-4. End with a one-line summary: "X issues found — N critical, M minor"
+1. Run `git diff --staged` to read the staged changes
+2. Identify the nature of the change: new feature, bug fix, refactor, docs, test, chore
+3. Write a commit message following Conventional Commits format:
+   - Type prefix (feat, fix, refactor, docs, test, chore)
+   - Optional scope in parentheses
+   - Imperative mood subject line under 72 characters
+   - Blank line then body if the change needs explanation
+4. Present the message and ask: "Use this, or adjust?"
 
 ## Constraints
 
-- Don't rewrite the entire code. Only flag problems.
-- Don't comment on style preferences unless it impacts readability.
-- If the code is fine, say so in one sentence. Don't invent issues.
+- Never commit automatically. Only generate the message.
+- Do not invent changes that are not in the diff.
+- If the diff is empty, say so and stop.
+- Keep subject line under 72 characters — no exceptions.
 
 ## Output
 
-A numbered list of issues with fixes, sorted by severity (critical first).
+A ready-to-use commit message displayed to the user, formatted for direct paste into `git commit -m`.
