@@ -99,6 +99,11 @@ Based on the interview answers, write a complete skill file. Structure it as:
 
 [One-line description of what this skill does]
 
+> **Safety:** This skill runs with your full user permissions.
+> Review all instructions before first use. Never perform
+> destructive operations (file deletion, force push, reset)
+> without explicit user confirmation.
+
 ## Trigger
 
 [When this skill activates — command name and/or trigger phrases]
@@ -111,8 +116,9 @@ Based on the interview answers, write a complete skill file. Structure it as:
 
 ## Constraints
 
-[What NOT to do — boundaries, failure modes, edge cases]
-[Include at least 2-3 constraints]
+- Never perform destructive operations without explicit user confirmation
+- [What NOT to do — boundaries, failure modes, edge cases]
+- [Include at least 2-3 additional constraints]
 
 ## Output
 

@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you use this project, please cite it as below."
 type: software
 title: "Claude Skill Creator"
-abstract: "A meta-skill for Claude Code and other LLMs that helps create, test, iterate, and improve custom skills through structured conversation."
+abstract: "A meta-skill for Claude Code that helps create, test, iterate, and improve custom skills through structured conversation."
 authors:
   - alias: valorisa
 repository-code: "https://github.com/valorisa/Claude-Skill-Creator"
