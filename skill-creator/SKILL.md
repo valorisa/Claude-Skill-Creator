@@ -128,13 +128,25 @@ Based on the interview answers, write a complete skill file. Structure it as:
 
 Place it in the appropriate location for the target LLM. For Claude Code: `~/.claude/skills/[skill-name]/SKILL.md`. Create the directory if it does not exist.
 
-### Phase 3 — Structural validation
+### Phase 3 — Council validation
 
-After generating, validate the draft against these criteria (do this silently, only report failures):
+After generating, submit the draft skill to the LLM Council for peer review. Invoke the `llm-council` skill (or apply the council methodology manually with 5 sub-agents if the skill is available) with this framing:
+
+> "Review this generated skill for quality, safety, and effectiveness. The skill is: [paste the full generated SKILL.md]. Evaluate: (1) Will the trigger fire correctly and not conflict with existing commands? (2) Are the process steps specific enough to produce consistent results? (3) Are the constraints sufficient to prevent harmful or unexpected behavior? (4) Is the output format clear and deliverable? (5) Would a user be confused by any instruction? (6) Are there edge cases not covered?"
+
+Present the Council verdict to the user with:
+
+- What the advisors agreed works well
+- What they flagged as problems
+- Specific fixes recommended
+
+Apply the recommended fixes before moving to Phase 4. If the Council finds no issues, proceed directly.
+
+This is real validation — 5 independent perspectives evaluating the skill, not self-grading. If the `llm-council` skill is not available, fall back to a structural checklist:
 
 1. Has a clear, unambiguous trigger description?
 2. Process steps are numbered and imperative (not vague)?
-3. At least 2 constraints defined?
+3. At least 2 constraints defined (including no destructive ops without confirmation)?
 4. Output format is explicit?
 5. Total length under 150 lines or 5000 characters?
 6. No instructions that contradict known LLM behaviors?

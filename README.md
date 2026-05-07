@@ -48,19 +48,17 @@ If you provide a precise specification that answers these questions upfront, the
 
 Based on your answers, the skill generates a complete structured markdown file with: trigger definition, numbered process steps, constraints, and output format. The file is placed in the correct location for your target LLM. The directory is created automatically if it does not exist.
 
-### Phase 3 - Structural validation
+### Phase 3 - Council validation
 
-Before showing you the result, the skill silently validates:
+Before showing you the result, the generated skill is submitted to the LLM Council for peer review (5 independent advisors evaluate quality, safety, edge cases, and clarity). The Council verdict is presented to you:
 
-- Clear trigger description present?
-- Process steps are numbered and imperative?
-- At least 2 constraints defined?
-- Output format is explicit?
-- Total length under 150 lines?
-- No contradictions with known LLM behaviors?
-- No conflicts with existing skill triggers?
+- What works well (consensus)
+- What was flagged as problematic
+- Specific fixes recommended
 
-Failures are auto-corrected before you see the output.
+Recommended fixes are applied before you see the final draft. This is real peer review, not self-evaluation.
+
+If the LLM Council skill is not available, a structural checklist is used as fallback (trigger clarity, imperative steps, constraints present, output explicit, length under 150 lines, no contradictions, no conflicts).
 
 ### Phase 4 - Iterate with user
 
