@@ -540,4 +540,25 @@ Produit ~/.claude/skills/[nouvelle-skill]/SKILL.md
 
 Tout est markdown. Rien d'autre.
 
+### Avertissement
+
+|                     | Ton skill (local)                                | Plugin officiel Anthropic                                             |
+|---------------------|--------------------------------------------------|------------------------------------------------------------------------|
+| Emplacement         | `~/.claude/skills/skill-creator/SKILL.md`         | `~/.claude/plugins/cache/claude-plugins-official/skill-creator/...`   |
+| Invocation          | `/skill-creator`                                 | `/skill-creator:skill-creator` (namespacé)                            |
+| Approche            | Interview conversationnelle en 5 phases, léger, markdown pur | Framework lourd avec evals, benchmarks, subagents, scripts Python, viewer HTML |
+| Complexité          | ~80 lignes                                       | ~600+ lignes + scripts + agents + assets                              |
+| Philosophie         | "La conversation est le produit"                 | "Itérer avec des métriques quantitatives"                             |
+
+### Verdict sur le conflit
+
+Pas de conflit technique direct. Claude Code namespace les plugins avec le préfixe `plugin-name:skill-name`.
+
+- `/skill-creator` → le skill local  
+- `/skill-creator:skill-creator` → le plugin officiel  
+
+Cependant, il y a un conflit de triggering implicite : quand un utilisateur dit *"create a skill"* ou *"new skill"* dans la conversation, Claude doit choisir lequel invoquer. Avec les deux installés, les descriptions se recouvrent — c'est ambigu.
+
+Si déjà installé via la commande `/plugins`, on peut décider de désinstaller le plugin officiel proposé par Anthropic. Les deux coexistent techniquement mais se marchent dessus en termes d’intention. Le skill local est plus léger et mieux aligné avec une philosophie markdown pur (sans benchmarks/evals).
+
 </details>
